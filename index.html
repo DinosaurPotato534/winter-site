@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Christmas Countdown</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            color: #ffffff;
+            text-align: center;
+            overflow-x: hidden;
+            position: relative;
+            background-image: url('snowScene.jpg');
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            height: 100vh;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        h1 {
+            margin-top: 10vh;
+            font-size: 5vw;
+            text-shadow: 0 0 20px #ffffff;
+        }
+
+        .countdown {
+            font-size: 2rem;
+            margin: 20px 0;
+            animation: fadeIn 3s infinite alternate;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+
+        .advent-calendar {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 20px auto;
+            max-width: 90%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+        }
+
+        .day {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            transition: transform 0.3s, background 0.3s;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            font-size: 1.5vw;
+            min-height: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .day.locked {
+            pointer-events: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .day:hover:not(.locked) {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .day.opened {
+            background: #ffcc00;
+            color: #003366;
+            cursor: default;
+            pointer-events: none;
+            animation: glow 1s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 10px #ffcc00; }
+            to { box-shadow: 0 0 30px #ffcc00; }
+        }
+
+        .day-number {
+            font-size: 2vw;
+            margin-bottom: 10px;
+        }
+
+        .day-content {
+            font-size: 1rem;
+            margin-top: 5px;
+            display: none;
+            word-wrap: break-word;
+        }
+
+        .day.opened .day-content {
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 8vw;
+            }
+
+            .countdown {
+                font-size: 1.5rem;
+            }
+
+            .day {
+                font-size: 4vw;
+            }
+
+            .day-number {
+                font-size: 6vw;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Christmas Countdown</h1>
+    <div class="countdown" id="countdown"></div>
+
+    <div class="advent-calendar" id="advent-calendar">
+    </div>
+
+    <script>
+        const countdownElement = document.getElementById('countdown');
+        const christmasDate = new Date(new Date().getFullYear(), 11, 25);
+        const today = new Date();
+        if (today.getMonth() === 11 && today.getDate() > 25) {
+            christmasDate.setFullYear(christmasDate.getFullYear() + 1);
+        }
+
+        function updateCountdown() {
+            const now = new Date();
+            const difference = christmasDate - now;
+
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((difference / (1000 * 60)) % 60);
+            const seconds = Math.floor((difference / 1000) % 60);
+
+            countdownElement.textContent = `Only ${days} days, ${hours} hours, ${minutes} minutes, and ${seconds} seconds until Christmas!`;
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        const adventCalendar = document.getElementById('advent-calendar');
+        const quotes = [
+            "'Tis the season to be jolly!",
+            "Merry everything and a happy always!",
+            "Keep calm and jingle on!",
+            "Have yourself a merry little Christmas!",
+            "Joy to the world!",
+            "Peace on Earth, goodwill to all!",
+            "Let it snow, let it snow, let it snow!",
+            "Dreaming of a white Christmas?",
+            "Christmas is not a date. It is a state of mind.",
+            "May your days be merry and bright!",
+            "Santa Claus is coming to town!",
+            "Christmas is the day that holds all time together.",
+            "Believe in the magic of Christmas.",
+            "Deck the halls with boughs of holly!",
+            "The best way to spread Christmas cheer is singing loud for all to hear.",
+            "It’s the most wonderful time of the year!",
+            "Let your heart be light.",
+            "Happiness is homemade at Christmas.",
+            "What happens under the mistletoe stays under the mistletoe!",
+            "Christmas waves a magic wand over the world.",
+            "Oh what fun it is to ride in a one-horse open sleigh!",
+            "Candy canes and silver lanes aglow.",
+            "Fa la la la la, la la la la!",
+            "A thrill of hope, the weary world rejoices."
+        ];
+
+        const todayDate = new Date().getDate();
+
+        for (let i = 0; i < 24; i++) {
+            const day = document.createElement('div');
+            day.classList.add('day');
+
+            if (i + 1 > todayDate) {
+                day.classList.add('locked');
+            } else if (i + 1 < todayDate) {
+                day.classList.add('opened');
+            }
+
+            day.innerHTML = `<div class="day-number">${i + 1}</div><div class="day-content">${quotes[i]}</div>`;
+
+            day.addEventListener('click', () => {
+                if (!day.classList.contains('locked') && !day.classList.contains('opened')) {
+                    day.classList.add('opened');
+                }
+            });
+
+            adventCalendar.appendChild(day);
+        }
+    </script>
+</body>
+</html>
